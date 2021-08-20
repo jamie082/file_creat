@@ -16,14 +16,14 @@ int main (void)
 		printf("True\n");
 	}
 
-	else if (chmod(path, S_IRUSR)) // True
+	if (chmod(path, S_IRUSR)) // True
 	{
 		printf("Directory is write protected\n"); // only printing if directory is -w
 		printf("%d ", errno);
 		printf("%s\n", strerror(errno));
 	}
 
-	else if (open(path, O_CREAT) == -1)  // (open(path, O_CREAT) == 1)
+	else if (open(path, O_CREAT) != 0)  // (open(path, O_CREAT) == 1)
 	{
 		printf("File created\n");
 	}
