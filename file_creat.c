@@ -16,9 +16,11 @@ int main (void)
 		printf("True\n");
 	}
 
-	else if (chmod(path, S_IRWXU) == -1) // True
+	else if (chmod(path, S_IRUSR)) // True
 	{
-		printf("Mode successful\n");
+		printf("Directory is write protected\n"); // only printing if directory is -w
+		printf("%d ", errno);
+		printf("%s\n", strerror(errno));
 	}
 
 	else if (open(path, O_CREAT) == -1)  // (open(path, O_CREAT) == 1)
@@ -30,7 +32,7 @@ int main (void)
 
 	else
 	{
-		printf("%d", errno);
+		printf("%d ", errno);
 		printf("%s\n", strerror(errno));
 	}
 
