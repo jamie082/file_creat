@@ -3,55 +3,75 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-extern int errno;
+int errno;
 
 int main (void)
 {
 	char *path = "temp.file";
 
+	struct stat SMetaData;
+
 	printf("Creating file...'%s'\n", path);
 
-	if (open(path, O_CREAT) == 1)  // creat file
-	{
-		printf("True\n");
-	}
-
-	else if (chmod(path, S_IRUSR)) // True
+	if (chmod(path, S_IRUSR)) // True
 	{
 		printf("Directory is write protected\n"); // only printing if directory is -w
 		printf("%d ", errno);
 		printf("%s\n", strerror(errno));
 	}
 
-	/* output mode of file */
+	int fd = (open(path, O_RDONLY) == 1); // file open
 
-	else if (open(path, O_CREAT) == -1)
+	if (open(path, O_CREAT) == 1) // file create
 	{
-		if (fd = 1)
+		if (fd) // file successfully created
 		{
-			printf("File created\n");
-		}
+			printf("File opened successfully\n"); // print file created (successfully)
 
-		switch (S_IRUSR) // print out permissions of temp.file
-		{
-			case S_IRWXU:
-				printf("read, write, and execute by user (owner)");
-				break;
-			case S_IRWXG:
-				printf("read, write, and execute by group");
-				break;
-			case S_IRWXO:
-				printf("read, write, and execute by other (world)");
-				break;
-		}
+			if (open(path, O_CREAT) == 1)
+			{
+				perror("File is already open\n");
+			}
 
-		else
+			stat(path ,&SMetaData);
+		
+			switch (SMetaData.st_mode & S_IFMT) // print permissions of file
+			{
+				case S_IFBLK:
+					printf("block device\n");
+					break;
+				case S_IFCHR:
+					printf("character device\n");
+					break;
+				case S_IFDIR:
+					printf("directory\n");
+					break;
+				case S_IFIFO:
+					printf("FIFO/pipe\n");
+					break;
+				case S_IFLNK:
+					printf("symlink\n");
+					break;
+				case S_IFREG:
+					printf("regular file\n");
+					break;
+				case S_IFSOCK:
+					printf("socket\n");
+					break;
+				default:
+					printf("unknown?\n");
+					break;
+				}
+		}
+			
+
+		if (!fd) // file error
 		{
-			printf("Directory is write protected\n");
+			perror("Error! Directory is write protected\n");
 			printf("%d ", errno);
 			printf("%s\n", strerror(errno));
 		}
 	}
 
-	exit(1);
+	return 0;
 }
