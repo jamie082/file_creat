@@ -5,36 +5,53 @@
 
 int errno;
 
+mode_t getumask()
+{
+	mode_t mask = umask(0);
+	umask (mask);
+
+	return mask;
+}
+
 int main (void)
 {
-	char *path = "temp.file";
+	mode_t mask = getumask();
+
+	char *path = "temp";
 
 	struct stat SMetaData;
 
-	printf("Creating file...'%s'\n", path);
+	int fd = (open(path, O_RDONLY)); // file open
 
-	if (chmod(path, S_IRUSR)) // True
+	if (open(path, O_CREAT)) // file create
 	{
-		printf("Directory is write protected\n"); // only printing if directory is -w
-		printf("%d ", errno);
-		printf("%s\n", strerror(errno));
-	}
-
-	int fd = (open(path, O_RDONLY) == 1); // file open
-
-	if (open(path, O_CREAT) == 1) // file create
-	{
-		if (fd) // file successfully created
+		if (fd < 0) // file successfully created
 		{
-			printf("File opened successfully\n"); // print file created (successfully)
+			printf("Creating file...'%s'\n", path);
 
-			if (open(path, O_CREAT) == 1)
+			if (errno == EEXIST)
 			{
-				perror("File is already open\n");
+				printf("file exists\n");		
 			}
 
-			stat(path ,&SMetaData);
+			else
+			{
+				printf("> File doesn't exist\n");
+			}
+
+			stat(path, &SMetaData);
+		}
+
+		if (umask(mask) == -1)
+		{
+			//perror(argv[0]);
+			exit(EXIT_FAILURE);
+		}
+
+		printf("%i", umask(path));	
 		
+		else
+		{	
 			switch (SMetaData.st_mode & S_IFMT) // print permissions of file
 			{
 				case S_IFBLK:
@@ -59,19 +76,11 @@ int main (void)
 					printf("socket\n");
 					break;
 				default:
-					printf("unknown?\n");
+					printf("unknown? file type\n");
 					break;
 				}
+			}
 		}
-			
 
-		if (!fd) // file error
-		{
-			perror("Error! Directory is write protected\n");
-			printf("%d ", errno);
-			printf("%s\n", strerror(errno));
-		}
-	}
-
-	return 0;
+		return 0;
 }
