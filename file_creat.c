@@ -1,3 +1,4 @@
+/* linux prog Jamie M */
 #include "apue.h"
 #include <fcntl.h>
 #include <errno.h>
@@ -23,6 +24,14 @@ int main (void)
 
 	int fd = (open(path, O_RDONLY)); // file open
 
+	if (umask(mask) == -1)
+	{
+		perror(path);
+		exit(EXIT_FAILURE);
+	}
+
+	printf("%d\n", mask);
+
 	if (open(path, O_CREAT)) // file create
 	{
 		if (fd < 0) // file successfully created
@@ -42,14 +51,6 @@ int main (void)
 			stat(path, &SMetaData);
 		}
 
-		if (umask(mask) == -1)
-		{
-			//perror(argv[0]);
-			exit(EXIT_FAILURE);
-		}
-
-		printf("%i", umask(path));	
-		
 		else
 		{	
 			switch (SMetaData.st_mode & S_IFMT) // print permissions of file
