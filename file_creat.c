@@ -1,4 +1,5 @@
 /* linux prog Jamie M */
+
 #include "apue.h"
 #include <fcntl.h>
 #include <errno.h>
@@ -8,7 +9,7 @@ int errno;
 
 mode_t getumask()
 {
-	mode_t mask = umask(0);
+	mode_t mask = umask(S_IRWXG);
 	umask (mask);
 
 	return mask;
@@ -30,28 +31,30 @@ int main (void)
 		exit(EXIT_FAILURE);
 	}
 
-	printf("%d\n", mask);
+	//printf("%d\n", mask);
 
 	if (open(path, O_CREAT)) // file create
 	{
 		if (fd < 0) // file successfully created
 		{
 			printf("Creating file...'%s'\n", path);
+				
+			sleep(1);  { printf("..."); }
 
-			if (errno == EEXIST)
+			if (!(errno == EEXIST))
 			{
-				printf("file exists\n");		
+				printf("File doesn't exist\n");
 			}
 
-			else
+			else if (errno == EEXIST)
 			{
-				printf("> File doesn't exist\n");
+				printf("File exists\n");
 			}
 
 			stat(path, &SMetaData);
 		}
 
-		else
+		else // file unsuccessfully created
 		{	
 			switch (SMetaData.st_mode & S_IFMT) // print permissions of file
 			{
