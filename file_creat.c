@@ -1,4 +1,6 @@
-/* linux prog Jamie M */
+/* linux prog Jamie M 
+ * 2021 */
+
 
 #include "apue.h"
 #include <fcntl.h>
@@ -35,27 +37,30 @@ int main (void)
 
 	if (open(path, O_CREAT)) // file create
 	{
-		if (fd < 0) // file successfully created
-		{
-			printf("Creating file...'%s'\n", path);
-				
-			sleep(1);  { printf("..."); }
+		int rc;
 
-			if (!(errno == EEXIST))
+		rc = chmod(path, 6244);
+
+		printf("%i\n", umask(rc));
+
+		if (fd == 0) // file successfully created
+		{
+			sleep(1);
+
+			printf("Creating file...1....2.....3..ERROR!\n'%s'\n", path);
+				
+			if (errno != EEXIST)
 			{
 				printf("File doesn't exist\n");
-			}
-
-			else if (errno == EEXIST)
-			{
-				printf("File exists\n");
 			}
 
 			stat(path, &SMetaData);
 		}
 
-		else // file unsuccessfully created
+		else if (fd > 1) // file unsuccessfully created
 		{	
+			printf("File exists\n");
+
 			switch (SMetaData.st_mode & S_IFMT) // print permissions of file
 			{
 				case S_IFBLK:
