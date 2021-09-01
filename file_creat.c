@@ -30,28 +30,18 @@ int main (void)
 
 	mode_t mask = getumask();
 
-	char *path = "temp";
+	char *path = "temp.dat";
 
 	struct stat SMetaData;
 
+	/*
 	int fd;
-
-	if ((fd = open(path, O_CREAT)) == 1) // file created
-	{
-		printf("file created successfully\n");
-	}
-
-	else if ((fd = open(path, O_RDONLY)) == -1) // if file is opened successful
-	{
-		printf("Error! File not opened.\n");
-		printf("file descriptor: %d\n", fd);
-	}
-
        	int rc = chmod(path, 6444);
+	*/
 
 	sleep(1);
 
-	printf("Creating file...1....2.....3..ERROR!\n'%s'\n", path);
+	printf("File Format v. 0.01!\n\nFile Name: %s\nError Code #: \nFile Type: ", path);
 
 	my_function();
 
@@ -94,12 +84,13 @@ void my_function (void)
 {
 	char *path = "temp";
 
-	if (access(path, F_OK) == 1)
+	if (!access(path, F_OK) > 0)
 	{
 		printf("File found\n");
 	}
 	
-	if (access(path, F_OK) != 1)
+	
+	if (access(path, F_OK) == -1)
 	{
 		printf("File not found\n");
 	}
