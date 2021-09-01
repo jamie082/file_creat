@@ -1,11 +1,14 @@
-/* linux prog Jamie M 
+/* linux prog Jamie M.
  * 2021 */
-
 
 #include "apue.h"
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <stdbool.h>
+#include <unistd.h>
+
+void my_function (void);
 
 int errno;
 
@@ -19,77 +22,85 @@ mode_t getumask()
 
 int main (void)
 {
+	/*
+	bool x = true;
+	bool y = false;
+	*/
+	// pointers & structures
+
 	mode_t mask = getumask();
 
 	char *path = "temp";
 
 	struct stat SMetaData;
 
-	int fd = (open(path, O_RDONLY)); // file open
+	int fd;
 
-	if (umask(mask) == -1)
+	if ((fd = open(path, O_CREAT)) == 1) // file created
 	{
-		perror(path);
-		exit(EXIT_FAILURE);
+		printf("file created successfully\n");
 	}
 
-	//printf("%d\n", mask);
-
-	if (open(path, O_CREAT)) // file create
+	else if ((fd = open(path, O_RDONLY)) == -1) // if file is opened successful
 	{
-		int rc;
+		printf("Error! File not opened.\n");
+		printf("file descriptor: %d\n", fd);
+	}
 
-		rc = chmod(path, 6244);
+       	int rc = chmod(path, 6444);
 
-		printf("%i\n", umask(rc));
+	sleep(1);
 
-		if (fd == 0) // file successfully created
+	printf("Creating file...1....2.....3..ERROR!\n'%s'\n", path);
+
+	my_function();
+
+	stat(path, &SMetaData);
+
+	switch (SMetaData.st_mode & S_IFMT) // print permissions of file
+	{	
 		{
-			sleep(1);
-
-			printf("Creating file...1....2.....3..ERROR!\n'%s'\n", path);
-				
-			if (errno != EEXIST)
-			{
-				printf("File doesn't exist\n");
+			case S_IFBLK:
+				printf("block device\n");
+				break;
+			case S_IFCHR:
+				printf("character device\n");
+				break;
+			case S_IFDIR:
+				printf("directory\n");
+				break;
+			case S_IFIFO:
+				printf("FIFO/pipe\n");
+				break;
+			case S_IFLNK:
+				printf("symlink\n");
+				break;
+			case S_IFREG:
+				printf("regular file\n");
+					break;
+			case S_IFSOCK:
+				printf("socket\n");
+				break;
+			default:
+				printf("unknown? file type\n");
+				break;
 			}
+	}
 
-			stat(path, &SMetaData);
-		}
+	return 0;
+}
 
-		else if (fd > 1) // file unsuccessfully created
-		{	
-			printf("File exists\n");
+void my_function (void)
+{
+	char *path = "temp";
 
-			switch (SMetaData.st_mode & S_IFMT) // print permissions of file
-			{
-				case S_IFBLK:
-					printf("block device\n");
-					break;
-				case S_IFCHR:
-					printf("character device\n");
-					break;
-				case S_IFDIR:
-					printf("directory\n");
-					break;
-				case S_IFIFO:
-					printf("FIFO/pipe\n");
-					break;
-				case S_IFLNK:
-					printf("symlink\n");
-					break;
-				case S_IFREG:
-					printf("regular file\n");
-					break;
-				case S_IFSOCK:
-					printf("socket\n");
-					break;
-				default:
-					printf("unknown? file type\n");
-					break;
-				}
-			}
-		}
-
-		return 0;
+	if (access(path, F_OK) == 1)
+	{
+		printf("File found\n");
+	}
+	
+	if (access(path, F_OK) != 1)
+	{
+		printf("File not found\n");
+	}
 }
