@@ -1,4 +1,4 @@
-/* linux prog Jamie M.
+/* linux file mode prog Jamie M.
  * 2021 */
 
 #include "apue.h"
@@ -7,45 +7,57 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <string.h>
 
-void my_function (void);
+void error_function (void);
 
 int errno;
 
-mode_t getumask()
-{
-	mode_t mask = umask(S_IRWXG);
-	umask (mask);
-
-	return mask;
-}
-
 int main (void)
 {
-	/*
-	bool x = true;
-	bool y = false;
-	*/
 	// pointers & structures
-
-	mode_t mask = getumask();
-
+	
+	int input;
+	char *string[100];
+	int fun_var[100];
 	char *path = "temp.dat";
+
+	int fd;
+
+	int owner_id = 0, group_id = 0, world_id = 0;
 
 	struct stat SMetaData;
 
-	/*
-	int fd;
-       	int rc = chmod(path, 6444);
-	*/
+	//int ret_value = error_function ();
+	
+	strcpy(fun_var, "> ");
+	printf("File Formater v. 0.01!\n\nError Code #: %d\nFile Type: \n", path);
+	printf("Insert file name to create: ");
+	scanf("%s", &string);
+
+	strcat(fun_var, string);
+	strcat(fun_var, ".dat");
+
+	printf("%s\n", fun_var);
+
+	if ((fd = creat(path, S_IWGRP | S_ISGID)) < 0) // set file modes
+	{
+		if (chmod(path, S_IXGRP) == 1)
+		{
+			printf("%s", path);
+		}
+	}
 
 	sleep(1);
 
-	printf("File Format v. 0.01!\n\nFile Name: %s\nError Code #: \nFile Type: ", path);
+	printf("*chmod> File mode: ");
+	scanf("%d", &owner_id);
 
-	my_function();
+	printf("file bits: o:%i:g:%i:o:%i\n", owner_id, owner_id, owner_id);
 
-	stat(path, &SMetaData);
+	error_function();
+
+	stat (path, &SMetaData);
 
 	switch (SMetaData.st_mode & S_IFMT) // print permissions of file
 	{	
@@ -80,7 +92,7 @@ int main (void)
 	return 0;
 }
 
-void my_function (void)
+void error_function (void)
 {
 	char *path = "temp";
 
@@ -89,9 +101,9 @@ void my_function (void)
 		printf("File found\n");
 	}
 	
-	
-	if (access(path, F_OK) == -1)
+	else if (access(path, F_OK) != 0)
 	{
 		printf("File not found\n");
 	}
+
 }
