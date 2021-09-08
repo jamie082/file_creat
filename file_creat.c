@@ -32,10 +32,20 @@ int main (void)
 	strcpy(fun_var, "> ");
 	printf("File Formater v. 0.01!\n\n");
 	printf("Error Code: > "); // if false, ask to create file
+
 	error_function();
 
-	printf("Insert file name to create: ");
-	scanf("%s", &string);
+	int a = 0;
+
+	while (a < 1) // while loop
+	{	
+		if (!found) // if error_function() returns false bool
+		{
+			printf("Insert file name to create: ");
+			scanf("%s", &string);
+		}
+		a++;
+	}
 
 	strcat(fun_var, string);
 	strcat(fun_var, ".dat");
@@ -100,14 +110,14 @@ void *error_function ()
 
 	if (!access(path, F_OK) > 0)
 	{
-		bool found_f = true;
+		bool found_f = 0000001;
 
 		printf("File found\n");
 	}
 	
 	else if (access(path, F_OK) != 0)
 	{
-		bool found_f = false;
+		bool found_f = 0000000;
 
 		if (!found_f)
 		{
