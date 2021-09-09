@@ -33,16 +33,22 @@ int main (void)
 	printf("File Formater v. 0.01!\n\n");
 	printf("Error Code: > "); // if false, ask to create file
 
-	error_function();
-
 	int a = 0;
+	int error_value = 0;
+
+	error_function();
 
 	while (a < 1) // while loop
 	{	
-		if (!found) // if error_function() returns false bool
+		if ((error_value) == -1) // if error_function() returns false bool
 		{
 			printf("Insert file name to create: ");
 			scanf("%s", &string);
+		}
+
+		else
+		{
+			break;
 		}
 		a++;
 	}
@@ -107,6 +113,7 @@ int main (void)
 void *error_function ()
 {
 	char *path = "temp";
+	int error_value = 0;
 
 	if (!access(path, F_OK) > 0)
 	{
@@ -122,8 +129,11 @@ void *error_function ()
 		if (!found_f)
 		{
 			printf("\nFile not found!\n");
+			error_value = -1;
 		}
 
 		printf("%s\n", strerror(errno));
 	}
+
+	return error_value;
 }
