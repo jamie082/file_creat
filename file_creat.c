@@ -1,5 +1,5 @@
 /* linux file mode prog Jamie Morrissey
- * 2021 San Diego, CA */
+ * 9/9/2021 San Diego, CA */
 
 #include "apue.h"
 #include <fcntl.h>
@@ -9,7 +9,8 @@
 #include <unistd.h>
 #include <string.h>
 
-void *error_function ();
+int error_function ();
+void *value_function ();
 
 int errno;
 
@@ -38,19 +39,10 @@ int main (void)
 
 	error_function();
 
-	while (a < 1) // while loop
-	{	
-		if ((error_value) == -1) // if error_function() returns false bool
-		{
-			printf("Insert file name to create: ");
-			scanf("%s", &string);
-		}
-
-		else
-		{
-			break;
-		}
-		a++;
+	if (error_function(error_value) == 1)
+	{
+		printf("> True\n");
+		value_function();
 	}
 
 	strcat(fun_var, string);
@@ -67,6 +59,13 @@ int main (void)
 	}
 
 	sleep(1);
+
+	char input[25];
+
+	printf("What's file name you want?: ");
+	scanf("%d", &input);
+
+	int od=open(input, O_CREAT, 400);
 
 	printf("*chmod> File mode: ");
 	scanf("%d %d %d", &owner_id, &group_id, &other_id);
@@ -110,7 +109,19 @@ int main (void)
 	return 0;
 }
 
-void *error_function ()
+void *value_function ()
+{
+	int error_value = 0;
+	char *string;
+
+	if ((error_value) == -1)
+	{
+		printf("Insert file name to create: ");
+		scanf("%s", &string);
+	}
+}
+
+int error_function ()
 {
 	char *path = "temp";
 	int error_value = 0;
@@ -120,6 +131,9 @@ void *error_function ()
 		bool found_f = 0000001;
 
 		printf("File found\n");
+		error_value = 1;
+
+		return error_value;
 	}
 	
 	else if (access(path, F_OK) != 0)
@@ -130,10 +144,10 @@ void *error_function ()
 		{
 			printf("\nFile not found!\n");
 			error_value = -1;
+
+			return error_value;
 		}
 
 		printf("%s\n", strerror(errno));
 	}
-
-	return error_value;
 }
