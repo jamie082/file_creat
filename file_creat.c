@@ -20,11 +20,8 @@ int main (void)
 {
 	// pointers & structures
 	
-	char *string[100];
 	int fun_var[100];
 	char *path = "temp.dat";
-
-	int fd;
 
 	int owner_id = 0;
 	int group_id = 0;
@@ -32,39 +29,22 @@ int main (void)
 
 	struct stat SMetaData;
 
-	strcpy(fun_var, "> ");
 	printf("File Formater v. 0.01!\n\n");
 	printf("Error Code: > "); // if false, ask to create file
 
-	int a = 0;
-	int error_value = 0;
-
-	error_function();
+	int error_value;
 
 	if (error_function(error_value) == 1)
 	{
 		printf("> True\n");
-		if(error_function(error_value) == -1)
-		{
-			printf("> False\n");
-		}
 	}
 
-	value_function();
-
-	/*
-	strcat(fun_var, string);
-	strcat(fun_var, ".dat");
-	*/
-
-	printf("%ls\n", fun_var);
 	
-	if ((fd = creat(path, S_IWGRP | S_ISGID)) < 0) // set file modes
+	if(error_function(error_value) == -1)
 	{
-		if (chmod(path, S_IXGRP) == 1)
-		{
-			printf("%s", path);
-		}
+		printf("> False\n");
+		printf("Create file next\n");
+		value_function();
 	}
 
 	sleep(1);
@@ -111,29 +91,41 @@ int main (void)
 	return 0;
 }
 
-void *value_function ()
+void *value_function () // create file
 {
-	int error_value = 0;
-
-	int fd;
+	char text[] = "this is a test";
 	static const char string[] = "test.test";
-	if ((error_value) == 1)
-	{
-		printf("Insert file name to create: ");
-		scanf("%s", &string);
-		
-		if ((fd = open(string, O_CREAT | O_RDWR)) == 1) // set file modes
-		{
-			printf("Error opening file\n");
-			exit(EXIT_FAILURE);
-		}
-		
-		close(fd);
-	}
 
-	else
+	int a = 0;
+	int fd;
+	char buff[1000];
+
+	while (a < 10) // loop
 	{
-		printf("Error: %s\n", strerror(errno));
+		if ((fd = open(string, O_CREAT | O_WRONLY, 400)) == -1)
+		{
+			printf("Opening failed\n");
+			exit(0);
+		}
+
+		else
+		{
+			printf("wrote %d bytes to the file:\n", strlen(buff));
+			printf("file opening successful\n");
+			printf("file descriptor: %d\n", fd);
+			if (read(string, buff, sizeof(buff)) == -1)
+			{
+				printf("Error while writing to file\n%s\n", strerror(errno));
+				exit(0);
+			}
+
+			else
+			{
+				printf("Error! %s", strerror(errno));
+			}
+		}
+		close(fd);
+		a++;
 	}
 }
 
@@ -144,7 +136,7 @@ int error_function ()
 
 	if (!access(path, F_OK) > 0)
 	{
-		bool found_f = 0000001;
+		bool found_f = 00000001;
 
 		printf("File found\n");
 		error_value = 1;
@@ -152,7 +144,7 @@ int error_function ()
 	
 	else if (access(path, F_OK) != 0)
 	{
-		bool found_f = 0000000;
+		bool found_f = 00000000;
 
 		if (!found_f)
 		{
