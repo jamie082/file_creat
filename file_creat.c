@@ -93,16 +93,15 @@ int main (void)
 
 void *value_function () // create file
 {
-	char text[] = "this is a test";
-	static const char string[] = "test.test";
+	char buff[] = "this is a test";
+	char string[] = "test.test";
 
 	int a = 0;
 	int fd;
-	char buff[1000];
 
-	while (a < 10) // loop
+	while (a < 1) // loop
 	{
-		if ((fd = open(string, O_CREAT | O_WRONLY, 400)) == -1)
+		if ((fd = open(string, O_CREAT| O_WRONLY)) == -1)
 		{
 			printf("Opening failed\n");
 			exit(0);
@@ -110,10 +109,9 @@ void *value_function () // create file
 
 		else
 		{
-			printf("wrote %d bytes to the file:\n", strlen(buff));
 			printf("file opening successful\n");
 			printf("file descriptor: %d\n", fd);
-			if (read(string, buff, sizeof(buff)) == -1)
+			if (write(fd, buff, strlen(buff)) == -1)
 			{
 				printf("Error while writing to file\n%s\n", strerror(errno));
 				exit(0);
@@ -121,7 +119,7 @@ void *value_function () // create file
 
 			else
 			{
-				printf("Error! %s", strerror(errno));
+				printf("wrote %ld bytes to the file:\n", strlen(buff));
 			}
 		}
 		close(fd);
